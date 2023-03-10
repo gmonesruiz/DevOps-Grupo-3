@@ -5,10 +5,10 @@ Trabajo integrador Bootcamp DevOps Engineer Educación IT
 
 Ingresar a aws-backend y ejecutar terraform init, plan y apply
 
-	$ cd aws-backend
-	$ aws-backend/ terraform init
-	$ aws-backend/ terraform plan
-	$ aws-backend/ terraform apply
+	$ cd AWS-eu-west-3/modules/aws-s3-bucket/
+	$ terraform init
+	$ terraform plan
+	$ terraform apply
 
 
 
