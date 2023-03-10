@@ -9,6 +9,7 @@ Ingresar a aws-backend y ejecutar terraform init, plan y apply
 	$ terraform init
 	$ terraform plan
 	$ terraform apply
+	$
 
 
 
