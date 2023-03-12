@@ -1,52 +1,81 @@
-
-variable "region" {
-  default = "us-east-1"
+provider "aws" {
+  region = "eu-west-3"
 }
 
-variable "instance_type" {
-  default = "t2.micro"
+data "aws_availability_zones" "available" {}
+
+data "aws_eks_cluster" "cluster" {
+  name = module.eks.cluster_id
 }
 
-variable "instance_count" {
-  default = 2
+data "aws_eks_cluster_auth" "cluster" {
+  name = module.eks.cluster_id
 }
 
-variable "mongo_version" {
-  default = "4.4"
+locals {
+  cluster_name = "grupo-3-staging-cluster"
 }
-# Crear instancias EC2
-resource "aws_instance" "ec2_instances" {
-  count = var.instance_count
-  ami = "ami-0c55b159cbfafe1f0"
-  instance_type = var.instance_type
-  tags = {
-    Name = "ec2-instance-${count.index + 1}"
+
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
+}
+
+module "eks-kubeconfig" {
+  source     = "hyperbadger/eks-kubeconfig/aws"
+  version    = "1.0.0"
+
+  depends_on = [module.eks]
+  cluster_id =  module.eks.cluster_id
+  }
+
+resource "local_file" "kubeconfig" {
+  content  = module.eks-kubeconfig.kubeconfig
+  filename = "kubeconfig_${local.cluster_name}"
+}
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "3.18.1"
+
+  name                 = "grupo3-staging-vpc"
+  cidr                 = "10.2.0.0/16"
+  azs                  = data.aws_availability_zones.available.names
+  private_subnets      = ["10.2.3.0/24", "10.2.4.0/24"]
+  public_subnets       = ["10.2.1.0/24", "10.2.2.0/24"]
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
+  enable_dns_hostnames = true
+
+  public_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/elb"                      = "1"
+  }
+
+  private_subnet_tags = {
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+    "kubernetes.io/role/internal-elb"             = "1"
   }
 }
 
-############## Pruebas de AWS_S3 #######################
+module "eks" {
+  source  = "terraform-aws-modules/eks/aws"
+  version = "18.30.3"
 
-variable "s3_bucket_name" {
-  type    = list(string)
-  default = ["mongodb", "test", "staging", "dev", "sandbox"]
-}
+  cluster_name    = "${local.cluster_name}"
+  cluster_version = "1.24"
+  subnet_ids      = module.vpc.private_subnets
 
-resource "aws_s3_bucket" "bucket" {
-  count         = "${length(var.s3_bucket_name)}"
-  bucket        = "${element(var.s3_bucket_name, count.index)}"
-  acl           = "private"
-  force_destroy = "true"
-    lifecycle_rule {
-    enabled = true
+  vpc_id = module.vpc.vpc_id
 
-    transition {
-      days = 180
-      storage_class = "STANDARD_IA"
-    }
+  eks_managed_node_groups = {
+    first = {
+      desired_capacity = 2
+      max_capacity     = 10
+      min_capacity     = 1
 
-    transition {
-      days = 360
-      storage_class = "GLACIER"
+      instance_type = "t2.micro"
     }
   }
 }
