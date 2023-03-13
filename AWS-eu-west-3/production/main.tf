@@ -1,3 +1,18 @@
+terraform {
+  #############################################################
+  ## Despues de correr terraform apply,
+  ## se puede descomentar esta parte o  copiar al main,
+  ## de esta manera se cambia de BACKEND local a BACKEND en AWS.
+  #############################################################
+    backend "s3" {
+      bucket         = "grupo-3-production-cluster" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
+      key            = "grupo-3/import-bootstrap/terraform.tfstate"
+      region         = "eu-west-3"
+      dynamodb_table = "terraform-state-locking"
+      encrypt        = true
+    }
+}
+
 provider "aws" {
   region = "eu-west-3"
 }

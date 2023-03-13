@@ -18,7 +18,7 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 3.7"
+      version = "~> 4.24"
     }
   }
 }
@@ -27,21 +27,49 @@ provider "aws" {
   region = "eu-west-3"
 }
 
-resource "aws_s3_bucket" "terraform_state" {
-  bucket        = "devops-bootcamp-grupo3" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
-  force_destroy = true
+############## Pruebas de AWS_S3 #######################
+
+variable "s3_bucket_name" {
+  type    = list(string)
+  default = ["grupo-3-staging-cluster", "grupo-3-production-cluster", "grupo-3-dev-cluster"]
 }
 
+resource "aws_s3_bucket" "terraform_state" {
+  count         = "${length(var.s3_bucket_name)}"
+  bucket        = "${element(var.s3_bucket_name, count.index)}"
+  acl           = "private"
+  force_destroy = "true"
+    lifecycle_rule {
+    enabled = true
+
+    transition {
+      days = 180
+      storage_class = "STANDARD_IA"
+    }
+
+    transition {
+      days = 360
+      storage_class = "GLACIER"
+    }
+  }
+}
+
+#resource "aws_s3_bucket" "terraform_state" {
+#  bucket        = "devops-bootcamp-grupo3" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
+#  force_destroy = true
+#}
 resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
-  bucket = aws_s3_bucket.terraform_state.id
+  count         = "${length(var.s3_bucket_name)}"
+  bucket        = "${element(var.s3_bucket_name, count.index)}"
   versioning_configuration {
     status = "Enabled"
   }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_conf" {
-  bucket        = aws_s3_bucket.terraform_state.bucket 
-  rule {
+  count         = "${length(var.s3_bucket_name)}"
+  bucket        = "${element(var.s3_bucket_name, count.index)}"
+    rule {
     apply_server_side_encryption_by_default {
       sse_algorithm = "AES256"
     }
