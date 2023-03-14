@@ -4,13 +4,13 @@ terraform {
   ## se puede descomentar esta parte o  copiar al main,
   ## de esta manera se cambia de BACKEND local a BACKEND en AWS.
   #############################################################
-    backend "s3" {
-      bucket         = "grupo-3-staging-cluster" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
-      key            = "grupo-3/import-bootstrap/terraform.tfstate"
-      region         = "eu-west-3"
-      dynamodb_table = "terraform-state-locking"
-      encrypt        = true
-    }
+  backend "s3" {
+    bucket         = "grupo-3-staging-cluster" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
+    key            = "grupo-3/import-bootstrap/terraform.tfstate"
+    region         = "eu-west-3"
+    dynamodb_table = "terraform-state-locking"
+    encrypt        = true
+  }
 }
 
 provider "aws" {
@@ -38,12 +38,12 @@ provider "kubernetes" {
 }
 
 module "eks-kubeconfig" {
-  source     = "hyperbadger/eks-kubeconfig/aws"
-  version    = "1.0.0"
+  source  = "hyperbadger/eks-kubeconfig/aws"
+  version = "1.0.0"
 
   depends_on = [module.eks]
-  cluster_id =  module.eks.cluster_id
-  }
+  cluster_id = module.eks.cluster_id
+}
 
 resource "local_file" "kubeconfig" {
   content  = module.eks-kubeconfig.kubeconfig
@@ -72,13 +72,17 @@ module "vpc" {
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"             = "1"
   }
+  tags = {
+    "Terraform"   = "true"
+    "Environment" = "staging"
+  }
 }
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "18.30.3"
 
-  cluster_name    = "${local.cluster_name}"
+  cluster_name    = local.cluster_name
   cluster_version = "1.24"
   subnet_ids      = module.vpc.private_subnets
 
@@ -92,5 +96,9 @@ module "eks" {
 
       instance_type = "t2.micro"
     }
+  }
+  tags = {
+    "Terraform"   = "true"
+    "Environment" = "staging"
   }
 }
