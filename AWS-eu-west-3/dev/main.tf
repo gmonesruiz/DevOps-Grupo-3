@@ -1,9 +1,5 @@
 terraform {
-  #############################################################
-  ## Despues de correr terraform apply,
-  ## se puede descomentar esta parte o  copiar al main,
-  ## de esta manera se cambia de BACKEND local a BACKEND en AWS.
-  #############################################################
+################# Se da por hecho que los recursos en s3 ya estan creados ################
   backend "s3" {
     bucket         = "grupo-3-dev-cluster" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
     key            = "grupo-3-dev-cluster/import-bootstrap/terraform.tfstate"
@@ -53,6 +49,8 @@ resource "local_file" "kubeconfig" {
   content  = module.eks-kubeconfig.kubeconfig
   filename = "kubeconfig_${local.cluster_name}"
 }
+
+#################### Se crea la VPC con dos zonas de disponibilidad ###################3
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
@@ -105,4 +103,18 @@ module "eks" {
     "Terraform"   = "true"
     "Environment" = "dev"
   }
+}
+
+resource "aws_iam_policy" "worker_policy" {
+  name        = "worker-policy-dev"
+  description = "Worker policy for the ALB Ingress"
+
+  policy = file("iam-policy.json")
+}
+
+resource "aws_iam_role_policy_attachment" "additional" {
+  for_each = module.eks.eks_managed_node_groups
+
+  policy_arn = aws_iam_policy.worker_policy.arn
+  role       = each.value.iam_role_name
 }

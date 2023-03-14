@@ -34,6 +34,8 @@ variable "s3_bucket_name" {
   default = ["grupo-3-staging-cluster", "grupo-3-production-cluster", "grupo-3-dev-cluster"]
 }
 
+############### Se configura el comportamiento de los buckets creados #################
+
 resource "aws_s3_bucket" "terraform_state" {
   count         = "${length(var.s3_bucket_name)}"
   bucket        = "${element(var.s3_bucket_name, count.index)}"
@@ -58,6 +60,9 @@ resource "aws_s3_bucket" "terraform_state" {
 #  bucket        = "devops-bootcamp-grupo3" # REEMPLAZAR CON EL NOMBRE DEL BUCKET NECESARIO
 #  force_destroy = true
 #}
+
+################### Se habilita el versionado ####################
+
 resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
   count         = "${length(var.s3_bucket_name)}"
   bucket        = "${element(var.s3_bucket_name, count.index)}"
@@ -65,6 +70,8 @@ resource "aws_s3_bucket_versioning" "terraform_bucket_versioning" {
     status = "Enabled"
   }
 }
+
+################## Se encriptan los datos ##########################
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_crypto_conf" {
   count         = "${length(var.s3_bucket_name)}"
@@ -75,6 +82,8 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state_c
     }
   }
 }
+
+################ Se crea la tabla "terraform-state-locking" en dynamodb ######################
 
 resource "aws_dynamodb_table" "terraform_locks" {
   name         = "terraform-state-locking"
