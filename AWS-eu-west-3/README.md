@@ -35,7 +35,13 @@
 	$ helm install aws-load-balancer-controller eks/aws-load-balancer-controller \
 	  --set autoDiscoverAwsRegion=true \
 	  --set autoDiscoverAwsVpcID=true \
-	  --set clusterName=learnk8s	
+	  --set clusterName=grupo-3-dev-cluster \
+	  --set rbac.create=true
+
+> Verificar que funciona
+
+	kubectl get pods -l "app.kubernetes.io/name=aws-load-balancer-controller"
+
 
 > A continuacion creamos el ALB ingress
 
@@ -45,7 +51,9 @@
 	$ kubectl describe ingress
 
 
+
+
 > Para eliminar los recursos creados
 
 	$ helm uninstall aws-load-balancer-controller
-	$ terraform distroy
+	$ terraform destroy

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hello-kubernetes-i-am-dev 
+  name: hello-kubernetes-i-am-dev
 spec:
   selector:
     matchLabels:
@@ -15,4 +15,4 @@ spec:
         - name: app
           image: paulbouwer/hello-kubernetes:1.10.1
           ports:
-            - containerPort: 8080
+            - containerPort: 8081

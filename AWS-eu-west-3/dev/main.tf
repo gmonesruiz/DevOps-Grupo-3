@@ -23,6 +23,7 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
+
 locals {
   cluster_name = "grupo-3-dev-cluster"
 }
@@ -39,10 +40,6 @@ module "eks-kubeconfig" {
 
   depends_on = [module.eks]
   cluster_id = module.eks.cluster_id
-  tags = {
-    "Terraform"   = "true"
-    "Environment" = "dev"
-  }
 }
 
 resource "local_file" "kubeconfig" {
@@ -118,3 +115,31 @@ resource "aws_iam_role_policy_attachment" "additional" {
   policy_arn = aws_iam_policy.worker_policy.arn
   role       = each.value.iam_role_name
 }
+provider "helm" {
+  kubernetes {
+    host                   = data.aws_eks_cluster.cluster.endpoint
+    cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+    token                  = data.aws_eks_cluster_auth.cluster.token
+    }
+}
+
+resource "helm_release" "ingress" {
+  name       = "ingress"
+  chart      = "aws-load-balancer-controller"
+  repository = "https://aws.github.io/eks-charts"
+  version    = "1.4.6"
+
+  set {
+    name  = "autoDiscoverAwsRegion"
+    value = "true"
+  }
+  set {
+    name  = "autoDiscoverAwsVpcID"
+    value = "true"
+  }
+  set {
+    name  = "clusterName"
+    value = local.cluster_name
+  }
+}
+

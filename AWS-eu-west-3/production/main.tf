@@ -28,7 +28,7 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 locals {
-  cluster_name = "grupo-3-production-cluster"
+  cluster_name = "grupo-3-dev-cluster"
 }
 
 provider "kubernetes" {
