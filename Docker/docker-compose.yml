@@ -1,0 +1,8 @@
+  version: '3.7'
+
+  services:
+
+    app-grupo-3:
+      image: grupo-3-app:v1.0.4
+      ports:
+        - 3000:3000

@@ -1,0 +1,18 @@
+version: '3.7'
+
+services:
+
+  acceleration-a:
+    image: jose10000/acceleration-a:v1.0.3
+    ports:
+      - 3002:3002
+
+  acceleration-dv:
+    image: jose10000/acceleration-dv:v1.0.3
+    ports:
+      - 3001:3001
+
+  acceleration-calc:
+    image: jose10000/acceleration-calc:v1.0.3
+    ports:
+      - 3000:3000
