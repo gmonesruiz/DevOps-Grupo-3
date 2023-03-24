@@ -41,12 +41,12 @@
 
 FROM node:10.14.2-alpine AS builder
 WORKDIR /app
-COPY . .
+COPY /home/jose/devops/repos/pruebas/Jenkins-docker/app-devops-bootcamp/api-store .
 RUN yarn install && yarn build
 
 FROM node:10.14.2-alpine
 COPY --from=builder ./app/dist ./dist
-COPY package.json .
+COPY /home/jose/devops/repos/pruebas/Jenkins-docker/app-devops-bootcamp/api-store/package.json .
 ENV WEB_PORT=3002
 EXPOSE 3002
 CMD [ "yarn", "start" ]
