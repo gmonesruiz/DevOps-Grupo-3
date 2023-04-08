@@ -11,5 +11,8 @@ Ingresar a aws-backend y ejecutar terraform init, plan y apply
 	$ terraform apply
 	$
 
+Para que funcione MongoDB atlas ejecutar lo siguiente
+
+kubectl apply -f https://raw.githubusercontent.com/mongodb/mongodb-atlas-kubernetes/main/deploy/all-in-one.yaml
 
 
