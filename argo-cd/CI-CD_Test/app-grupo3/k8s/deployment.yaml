@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-grupo3
+spec:
+  selector:
+    matchLabels:
+      app: dev-grupo3
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: dev-grupo3
+    spec:
+      containers:
+        - name: dev-grupo3
+          image: docker.io/jose10000/dev-grupo3:v1.20
+          imagePullPolicy: IfNotPresent   
+
+          ports:
+            - containerPort: 3000
+          env: 
+            - name: PORT
+              value: "3000"
+            - name: "MONGO_URI"
+              valueFrom:
+                secretKeyRef:
+                  name: dev-grupo3-project-cluster0-jose10000
+                  key: connectionStringStandardSrv
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "200m"
+            limits:
+                memory: "256Mi"
+                cpu: "500m"

@@ -1,0 +1,15 @@
+---
+image:
+  tag: "v0.12.2"
+
+metrics:
+  enabled: true
+
+config:
+  registries:
+    - name: Docker Hub
+      api_url: https://registry-1.docker.io
+      credentials: secret:argocd/dockerhub#my-token
+      ping: yes
+      limit: 20
+      default: true

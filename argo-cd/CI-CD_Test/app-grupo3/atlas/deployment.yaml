@@ -1,0 +1,15 @@
+apiVersion: atlas.mongodb.com/v1
+kind: AtlasDeployment
+metadata:
+  name: dev-grupo3-cluster
+spec:
+  projectRef:
+    name: dev-grupo3-project
+  deploymentSpec:
+    name: Cluster0
+    providerSettings:
+      instanceSizeName: M0
+      providerName: TENANT
+      regionName: EU_WEST_3
+      backingProviderName: AWS
+
