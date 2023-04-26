@@ -36,7 +36,6 @@ variable "number_of_instances" {
 }
 
 # VPC and subnet.
-
 variable "cidr_vpc" {
   description = "CIDR block for the VPC"
   default     = "10.1.0.0/16"
@@ -62,5 +61,10 @@ variable "environment_tag" {
 # Security group
 variable "ingressports" {
   type    = list(number)
-  default = [8080, 22]
+  default = [8080, 22, 80]
+}
+
+variable "ingressports_udp" {
+  type    = list(number)
+  default = [443]
 }

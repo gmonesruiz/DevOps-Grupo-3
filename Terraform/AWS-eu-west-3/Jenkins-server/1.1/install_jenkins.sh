@@ -2,13 +2,15 @@
 # Deployment of Jenkins server
 
 # Update the system
-sudo apt update -y || sudo apt upgrade -y
+sudo apt update -y # || sudo apt upgrade -y
 
 # Install Java
 sudo apt install openjdk-11-jdk -y
+
 # Install Git
 sudo apt install git -y
 sudo apt install maven -y
+
 # Install GitHub CLI
 type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
 curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -16,8 +18,10 @@ curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo 
 && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
 && sudo apt update \
 && sudo apt install gh -y
+
 # Install Groovy
 sudo apt install groovy -y
+
 # Install jq
 sudo apt install jq -y
 
@@ -32,6 +36,8 @@ sudo apt-get update -y
 sudo apt-get install jenkins -y
     sudo systemctl enable jenkins
     sudo systemctl start jenkins
+    
+# Install Docker
     sudo apt-get install \
     ca-certificates \
     curl \
@@ -56,4 +62,3 @@ echo \
     echo " The Jenkins password is: "
     sudo cat /var/lib/jenkins/secrets/initialAdminPassword
     
-

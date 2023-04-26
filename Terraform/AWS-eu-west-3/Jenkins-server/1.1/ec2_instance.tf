@@ -1,6 +1,6 @@
 # EC2 instance
 resource "aws_instance" "ec2_instance" {
-  ami = var.ami_id
+  ami                    = var.ami_id
   # count                  = var.number_of_instances
   subnet_id              = aws_subnet.subnet_public.id
   instance_type          = var.instance_type
@@ -20,9 +20,9 @@ resource "null_resource" "name" {
 
   # Se usa el .pem y el usuario  para conectarse a la instancia // ssh into the ec2 instance 
   connection {
-    type       = "ssh"
-    user       = "ubuntu"
-    host       = aws_instance.ec2_instance.public_ip
+    type = "ssh"
+    user = "ubuntu"
+    host = aws_instance.ec2_instance.public_ip
   }
 
   # Copia el bash de jenkins en la instancia de AWS en el TMP // copy the install_jenkins.sh file from your computer to the ec2 instance  

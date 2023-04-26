@@ -19,7 +19,7 @@ resource "aws_subnet" "subnet_public" {
   map_public_ip_on_launch = "true"
   availability_zone       = var.availability_zone
   tags = {
-    Environment = var.environment_tag
+    Environment = "${var.environment_tag}"
   }
 }
 
@@ -28,7 +28,7 @@ resource "aws_internet_gateway" "igw-test1" {
   vpc_id = aws_vpc.VPC-test1.id
   tags = {
     Name        = "IGW-terraform"
-    Environment = var.environment_tag
+    Environment = "${var.environment_tag}"
   }
 }
 
@@ -63,8 +63,18 @@ resource "aws_security_group" "jenkins-sg" {
       to_port     = ingress.value
       cidr_blocks = ["0.0.0.0/0"]
     }
+  
   }
-
+  dynamic "ingress" {
+    for_each = var.ingressports_udp
+    content {
+      protocol    = "udp"
+      from_port   = ingress.value
+      to_port     = ingress.value
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -78,31 +88,3 @@ resource "aws_security_group" "jenkins-sg" {
 
   }
 }
-
-
-
-# security group for ssh
-#resource "aws_security_group" "sg_22" {
-#  name   = "sg_22"
-#  vpc_id = aws_vpc.VPC-test1.id
-#
-#  ingress {
-#    from_port   = 22
-#    to_port     = 22
-#    protocol    = "tcp"
-#    cidr_blocks = ["0.0.0.0/0"]
-#  }
-#
-#  egress {
-#    from_port   = 0
-#    to_port     = 0
-#    protocol    = "-1"
-#    cidr_blocks = ["0.0.0.0/0"]
-#  }
-#
-#  tags = {
-#    "Environment" = var.environment_tag
-#  }
-#}
-
-
