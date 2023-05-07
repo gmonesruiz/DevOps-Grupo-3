@@ -106,7 +106,7 @@ resource "null_resource" "name" {
   # Se usa el .pem y el usuario  para conectarse a la instancia // ssh into the ec2 instance 
   connection {
     type        = "ssh"
-    user        = "ec2-user"
+    user        = "ec2-user"   #cambiar por ubuntu para ubuntu
     private_key = file("~/Downloads/ec2_key.pem")
     host        = aws_instance.ec2_instance.public_ip
   }
