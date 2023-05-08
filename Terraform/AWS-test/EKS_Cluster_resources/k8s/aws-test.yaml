@@ -6,7 +6,9 @@ metadata:
   name: aws-test
   namespace: default
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::424432388155:role/test-oidc
+    eks.amazonaws.com/role-arn: arn:aws:iam::684866157439:role/test-oidc # Replace with your own IAM Role ARN, which is used to test the connectivity to S3 bucket
+  # You can find the IAM Role ARN in the Terraform output of the test_policy_arn.
+  # If you can't see it, go to AWS Console -> IAM -> Roles -> test-oidc -and- copy the Role ARN and paste it here.
 ---
 apiVersion: v1
 kind: Pod

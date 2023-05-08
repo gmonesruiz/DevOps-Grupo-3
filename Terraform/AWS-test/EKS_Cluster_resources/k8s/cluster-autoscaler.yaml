@@ -8,7 +8,9 @@ metadata:
   name: cluster-autoscaler
   namespace: kube-system
   annotations:
-    eks.amazonaws.com/role-arn: arn:aws:iam::424432388155:role/eks-cluster-autoscaler
+    eks.amazonaws.com/role-arn: arn:aws:iam::684866157439:role/eks-cluster-autoscaler # Replace with your own EKS Cluster Autoscaler IAM Role ARN
+      # You can find the IAM Role ARN in the Terraform output of the EKS Cluster Autoscaler module.
+      # Go to AWS Console -> IAM -> Roles -> eks-cluster-autoscaler -and- copy the Role ARN and paste it here.
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -148,7 +150,7 @@ spec:
           type: RuntimeDefault
       serviceAccountName: cluster-autoscaler
       containers:
-        - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.25.1
+        - image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.25
           name: cluster-autoscaler
           resources:
             limits:
@@ -164,7 +166,7 @@ spec:
             - --cloud-provider=aws
             - --skip-nodes-with-local-storage=false
             - --expander=least-waste
-            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/demo
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/my-demo
           volumeMounts:
             - name: ssl-certs
               mountPath: /etc/ssl/certs/ca-certificates.crt #/etc/ssl/certs/ca-bundle.crt for Amazon Linux Worker Nodes

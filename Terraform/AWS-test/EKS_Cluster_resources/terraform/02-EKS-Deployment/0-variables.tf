@@ -18,27 +18,30 @@ variable "aws-profile" {
 # VPC.
 variable "cidr-vpc" {
   description = "CIDR block for the VPC"
-  default     = "10.1.0.0/16" # 65534 IPs
+  default     = "10.0.0.0/16" # 65534 IPs
 }
+
+##################################################
 
 #Subnets.
 variable "cidr-private-subnet-a" {
   description = "CIDR block for the private subnet a"
-  default     = "10.1.0.0/19" # 8190 IPs
+  default     = "10.0.0.0/19" # 8190 IPs
 }
 variable "cidr-private-subnet-b" {
   description = "CIDR block for the private subnet b"
-  default     = "10.1.32.0/19" # 8190 IPs
+  default     = "10.0.32.0/19" # 8190 IPs
 }
 
 variable "cidr-public-subnet-a" {
   description = "CIDR block for the public ubnet a"
-  default     = "10.1.64.0/19" # 8190 IPs
+  default     = "10.0.64.0/19" # 8190 IPs
 }
 variable "cidr-public-subnet-b" {
   description = "CIDR block for the public subnet b"
-  default     = "10.1.96.0/19" # 8190 IPs
+  default     = "10.0.96.0/19" # 8190 IPs
 }
+
 
 ##################################################
 

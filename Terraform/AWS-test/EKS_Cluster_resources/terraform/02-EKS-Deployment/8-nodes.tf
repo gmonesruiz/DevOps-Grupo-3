@@ -15,6 +15,9 @@ resource "aws_iam_role" "eks-nodes" {
   })
 }
 
+###########################################################
+
+# Iam roles policy attachment
 resource "aws_iam_role_policy_attachment" "eks-nodes-AmazonEKSWorkerNodePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
   role       = aws_iam_role.eks-nodes.name
@@ -30,18 +33,23 @@ resource "aws_iam_role_policy_attachment" "eks-nodes-AmazonEC2ContainerRegistryR
   role       = aws_iam_role.eks-nodes.name
 }
 
+###########################################################
+
+# EKS node group
 resource "aws_eks_node_group" "private-eks-nodes" {
   cluster_name    = aws_eks_cluster.my-demo.name
   node_group_name = "private-eks-nodes"
   node_role_arn   = aws_iam_role.eks-nodes.arn
 
   subnet_ids = [
-    aws_subnet.private-subnet-region-a.id,
-    aws_subnet.private-subnet-region-b.id
+    aws_subnet.private-subnet-a.id,
+    aws_subnet.private-subnet-b.id
   ]
 
+
   capacity_type  = "ON_DEMAND"
-  instance_types = ["t2.micro"]
+  instance_types = ["t3.medium"] # Go to https://www.middlewareinventory.com/blog/kubernetes-max-pods-per-node/ and select the instance type you want to use
+  # t3.medium can support 37 pods per node
 
   scaling_config {
     desired_size = 1

@@ -12,16 +12,7 @@ Export kubernetes config
     $ kubectl get svc
     $ kubectl get nodes
     $ kubectl get all
+    $ kubectl exec aws-cli -- aws s3api list-buckets
     
 
 
-Deploying the Dashboard UI 
-The Dashboard UI is not deployed by default. To deploy it, run the following command:
-
-    $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
-
-
-Command line proxy 
-You can enable access to the Dashboard using the kubectl command-line tool, by running the following command:
-
-    $ kubectl proxy
